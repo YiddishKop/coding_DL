@@ -1,0 +1,80 @@
+# -*- org-export-babel-evaluate: nil -*-
+#+PROPERTY: header-args :eval never-export
+#+PROPERTY: header-args:python :session title
+#+PROPERTY: header-args:ipython :session title
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="" >
+#+HTML_HEAD: <script src="path to your .js file"></script>
+#+HTML_HEAD: <script type="text/javascript">
+#+HTML_HEAD: <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:nil html-preamble:t
+#+OPTIONS: H:3 num:nil ^:nil _:nil tags:not-in-toc
+#+TITLE: PIL Module Tutorials
+#+AUTHOR: yiddishkop
+#+EMAIL: [[mailto:yiddishkop@163.com][yiddi's email]]
+#+TAGS: {PKGIMPT(i) DATAVIEW(v) DATAPREP(p) GRAPHBUILD(b) GRAPHCOMPT(c)} LINAGAPI(a) PROBAPI(b) MATHFORM(f) MLALGO(m)
+
+
+#+BEGIN_EXAMPLE
+m - mode
+s - size
+c - color
+p - path
+img - image_handler[Image Obj]
+
+
+               Image.eval(img, lambda_fn): apply lambda_fn on each pixel of img
+
+               Image.composit(img1, img2, mask_img) :  img1 and img2 must have same size
+
+               Image.blend(img1, img2, 0.5) --+ : img1 and img2 must have same size
+                             |    |           |
+                             ^    ^           v
+                             |    |           |
+                             |    |           |
+                             +----+-----------+----
+                                               [Image obj]
+                Image.new(m,s,c) ===return===> image_handler   . show() dispaly img
+                 |                                |        |
+                 |  +-----------------------------+        |
+                 |  | .save(p)                             |
+                 |  |                                      |
+                 |  |                                      ^
+                 v  v                               ^ |    +-- . convert(m)
+                                                    | |        . crop((left,up,right,down))
+                image file(store in some path)      | |        . split() == return ==> (red degree of all pixels of this image,
+   +----+       +----+                              | v                                 green degree of all pixels of this image,
+   |... |       |... |                              | del                               blue degree of all pixels of this image)
+   |  ..| ----- |  ..|                              |          . filter( ImageFilter.BLUR/CONTOUR/SHARPEN/SMOOTH/DETAIL/FIND_EDGES/EMBOSS/EDGE_ENHANCE)
+   +----+       +----+                              |          . size
+                                                    |          . getcolors(maxcolors) ==return==> a list of (number, (r,g,b))
+                Image.open(p, m) =================return       . getpixel((w,h)) ==return==> (r,g,b)
+                                                               . getdata() ==return==> ImageObj
+                                                               . list(imageobj.getdata()) ==return==> a list of (r,g,b) in image order from left top to right bottom
+
+                                                               . paste(img1, ("box")) modify imageobj in place +.show()+ CANNOT call show directly.
+
+                                                               . resize((w,h))
+                                                               . thumbnail((w,h), resample=1) modify imageobj in place +.show()+ CANNOT call show directly.
+
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+crop((l,u,r,d)); paste(image, (l,u,r,d))
+      -------                  -------
+         |                        |
+         |                        |
+            This is called "box"
+
+          |
+          |(0,0)
+      ----+-------------+-------->
+          |             |
+          |             |
+          |   image     |
+          |             |
+          |             |
+          +-------------+
+          |              (width, height)
+          |
+          v
+#+END_EXAMPLE

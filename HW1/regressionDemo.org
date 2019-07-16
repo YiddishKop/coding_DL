@@ -1,0 +1,248 @@
+# -*- org-export-babel-evaluate: nil -*-
+#+PROPERTY: header-args :eval never-export
+#+PROPERTY: header-args:python :session title
+#+PROPERTY: header-args:ipython :session title
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="path to your .css file" >
+#+HTML_HEAD: <script src="path to your .js file"></script>
+#+HTML_HEAD: <script type="text/javascript">
+#+HTML_HEAD: <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:nil html-preamble:t
+#+OPTIONS: H:3 num:nil ^:nil _:nil tags:not-in-toc
+#+TITLE: Regression Demo
+#+AUTHOR: yiddishkop
+#+EMAIL: [[mailto:yiddishkop@163.com][yiddi's email]]
+#+TAGS: {PKGIMPT(i) DATAVIEW(v) DATAPREP(p) GRAPHBUILD(b) GRAPHCOMPT(c)} LINAGAPI(a) PROBAPI(b) MATHFORM(f) MLALGO(m)
+
+* KanBan
+
+#+NAME: Regression with AdaGrad
+#+BEGIN_SRC python :tangle yes :noweb yes :exports code :results output drawer
+
+#+END_SRC
+
+* <<imports>>
+#+BEGIN_SRC python :session regdemo :tangle yes :exports code :async t :results output
+  import matplotlib
+  import matplotlib.pyplot as plt
+  matplotlib.use('Agg')
+  # %matplotlib inline
+  import random as random # can not call directly, import before using
+  import numpy as np
+  import csv
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+__main__:3: UserWarning:
+This call to matplotlib.use() has no effect because the backend has already
+been chosen; matplotlib.use() must be called *before* pylab, matplotlib.pyplot,
+or matplotlib.backends is imported for the first time.
+
+The backend was *originally* set to 'TkAgg' by the following code:
+  File "<stdin>", line 1, in <module>
+  File "c:/Users/Ersin/AppData/Local/Temp/babel-GVjDuy/python-Ae8FNz", line 2, in <module>
+    import matplotlib.pyplot as plt
+  File "c:\Users\Ersin\AppData\Local\Programs\Python\Python36\lib\site-packages\matplotlib\pyplot.py", line 71, in <module>
+    from matplotlib.backends import pylab_setup
+  File "c:\Users\Ersin\AppData\Local\Programs\Python\Python36\lib\site-packages\matplotlib\backends\__init__.py", line 16, in <module>
+    line for line in traceback.format_stack()
+#+end_example
+
+* <<datasets>>
+#+BEGIN_SRC python :session regdemo :tangle yes :exports code :async t :results output
+  x_data = [ 338., 333., 328. , 207. , 226. , 25. , 179., 60., 208., 606.]
+  y_data = [ 640., 633., 619. , 393. , 428. , 27. , 193., 66., 226., 1591.]
+#+END_SRC
+
+#+RESULTS:
+
+* <<error contour prepare>>
+** <<(w,b) meshgrid>>
+ 生成 w,b 数据矩阵(grid)用于计算dataset在每个参数点(wi,bi)的 accumulated error，
+ 最终生成 error contour.
+ #+BEGIN_SRC python :session regdemo :tangle yes :exports code :async t :results output
+   bias_arr = np.arange(-200,-100,1) #bias
+   weight_arr = np.arange(-5,5,0.1) #weight
+   plot_grid_value =  np.zeros((len(bias_arr), len(weight_arr)))
+   X, Y = np.meshgrid(bias_arr, weight_arr)
+ #+END_SRC
+
+ #+RESULTS:
+
+** <<compute error of each (w,b) for error contour plotting>>
+ 计算dataset所有点在以每个点 ~(wi,bi)~ 作为拟合函数 ~f(x)=wi*x+b~ 时的 accumulated error
+ #+BEGIN_SRC python :session regdemo :tangle yes :exports code :async t :results output
+   for i in range(len(bias_arr)):
+       for j in range(len(weight_arr)):
+           b = bias_arr[i]
+           w = weight_arr[j]
+           plot_grid_value[j][i] = 0
+           for n in range(len(x_data)):
+               plot_grid_value[j][i] = plot_grid_value[j][i] + (y_data[n] - b - w*x_data[n])**2
+           plot_grid_value[j][i] = plot_grid_value[j][i]/len(x_data)
+ #+END_SRC
+
+ #+RESULTS:
+
+* <<initialization>>
+** <<parameter initialization>>
+ 设置模型参数：初始权重，初始截距，学习率，迭代次数。
+ #+BEGIN_SRC python :session regdemo :tangle yes :exports code :async t :results output
+   # ydata = b + w * xdata
+   b = -120 # initial b
+   w = -4 # initial w
+   lr = 1 # learning rate
+   iteration = 100000
+
+   b_lr = 0.0
+   w_lr = 0.0
+ #+END_SRC
+
+ #+RESULTS:
+
+** <<record historical w and b>>
+ 记录 w,b 的变化过程， 用于在 plot_grid_value 上绘制 w,b 的变化轨迹。
+ #+BEGIN_SRC python :session regdemo :tangle yes :exports code :async t :results output
+   # Store initial values for plotting.
+   b_history = [b]
+   w_history = [w]
+ #+END_SRC
+
+ #+RESULTS:
+
+* <<train>>
+
+  训练过程包括:
+  - *循环指定更新次数*
+  - *计算梯度*
+  - *运用梯度下降算法数学迭代式更新参数*
+#+BEGIN_SRC python :session regdemo :noweb yes :exports code :async t :results output
+  for i in range(iteration):
+     <<compute current gradient of each parameter under sum error>>
+     <<add square of current gradient to historical sum square>>
+     <<update parameters by adagrad>>
+     <<store parameters into related arr for plotting>>
+#+END_SRC
+
+#+RESULTS:
+
+#+name: compute current gradient of each parameter under sum error
+#+BEGIN_SRC python :session regdemo :tangle yes :exports code :async t :results output
+  b_grad = 0.0
+  w_grad = 0.0
+  for n in range(len(x_data)):
+      b_grad = b_grad - 2.0*(y_data[n] - b - w*x_data[n])*1.0
+      w_grad = w_grad - 2.0*(y_data[n] - b - w*x_data[n])*x_data[n]
+#+END_SRC
+
+#+name: add square of current gradient to historical sum square
+#+BEGIN_SRC python :session regdemo :tangle yes :exports code :async t :results output
+  b_lr = b_lr + b_grad**2
+  w_lr = w_lr + w_grad**2
+#+END_SRC
+
+#+name: update parameters by adagrad
+#+BEGIN_SRC python  :session regdemo :tangle yes :exports code :async t :results output
+      # Update parameters.
+      b = b - lr/np.sqrt(b_lr) * b_grad
+      w = w - lr/np.sqrt(w_lr) * w_grad
+#+END_SRC
+
+#+name: store parameters into related arr for plotting
+#+BEGIN_SRC python  :session regdemo :tangle yes :exports code :async t :results output
+      # Store parameters for plotting
+      b_history.append(b)
+      w_history.append(w)
+#+END_SRC
+
+* <<plot trajectory of (w,b) on loss contour>>
+#+name: plot the trajectory of (w,b) from historical records
+#+BEGIN_SRC python :session regdemo :tangle yes :exports code :async t :results output
+  # plot the figure
+  # contour
+  plt.contourf(bias_arr,weight_arr,plot_grid_value, 5, alpha=0.5, cmap=plt.get_cmap('jet'))
+  plt.plot([-188.4], [2.67], 'x', ms=12, markeredgewidth=3, color='orange')
+  plt.plot(b_history, w_history, 'o-', ms=3, lw=1.5, color='black')
+  plt.xlim(-200,-100)
+  plt.ylim(-5,5)
+  plt.xlabel(r'$b$', fontsize=16)
+  plt.ylabel(r'$w$', fontsize=16)
+  plt.show()
+#+END_SRC
+
+
+#+BEGIN_EXAMPLE
+plt.contourf(bias_arr,weight_arr,plot_grid_value, 5, alpha=0.5, cmap=plt.get_cmap('jet'))
+#+END_EXAMPLE
+
+等高线（ ~contour~, ~contourf~ ）就是把具有相同高度的地理位置"点"（一个位置点就
+是一个经纬度，或者进一步说就是坐标点 ~(x,y)~ ）做连线，关键问题是高度是连续的
+（海拔10米~100米），理论上你可以做无数条等高线，所以 ~contour([X, Y,] Z,
+[levels], **kwargs)~ 中的 ~[levels]~ 是一个数组，里面的值就是在 *指定你要在海拔
+多少米画等高线*, 也可以直接设置数字---把函数中的 ~Z~ 值（海拔）平均分成多少份做
+等高线。
+
+contour 和 contourf 一般使用 ~np.meshgrid(arrX,arrY)~ 用于生成位置点 ~(x,y)~---"
+经纬度", 然后通过一个函数来计算高度（或直接提供每个位置点的高度值） ~Z=f((x,y))~
+。
+
+#+BEGIN_EXAMPLE
+          arr1    arr2
+           |       |
+           |       |                 +--------------------+
+           |       |                 |       +------------+------+
+           |       |                 |       |            |      |
+meshgrid(  v   ,   v   )   =====>   arr3,   arr4      f ( v  ,   v )
+                                     |       |        -------------- all math operations
+                                     |       |              |        applied on ndarray
+                                     |       |              |        is element-wise
+                                     |       |              |
+                       plt.contourf( v   ,   v    ,         v     ,
+
+                                    contour_number, cmap=plt.get_cmap('jet) )
+
+
+
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+
+  plt.contourf(bias_arr,weight_arr,plot_grid_value, 5, alpha=0.5, cmap=plt.get_cmap('jet'))
+               -------  ---------- ---------------
+         +-------           |              \
+         |                  |               \
+         |                  v                \
+         |          ^   ----------------------\--
+         |                                    |
+         |          |   |   |   |   |   |   |  \|
+         |       ---+---|---|---|---|---|---|---*--------
+         |   /      |   |   |   |   |   |   |   |
+         |   |   ---+---|---|---|---|---|---|---|--------
+         |   |      |   |   |   |   |   |   |   |
+         |   |   ---+---|---|---|---|---|---|---|--------
+         +-> |      |   |   |   |   |   |   |   |
+             |   ---+---|---|---|---|---|---|---|--------
+             |      |   |   |   |   |   |   |   |
+             |   ---+---|---|---|---|---|---|---|--------
+             |      |   |   |   |   |   |   |   |
+             |   ---+---|---|---|---|---|---|---|--------
+             \      |   |   |   |   |   |   |   |
+                 ---+------------------------------------>
+                    |
+
+
+
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+plt.plot([-188.4], [2.67], 'x', ms=12, markeredgewidth=3, color='orange')
+#+END_EXAMPLE
+
+- ~ms=12~ : ~markersize=12~, 因为 plot 是对 *点* 做 *连线* ，这些 *点* 用什么 ~
+  记号~ （默认无记号）什么 ~尺寸~, 这些 *连线* 采用什么 ~样式~ （虚线，点线，实
+  线等）是通过 plot 函数的 ~linestyle~ ~linewidth~ 和 ~marker~ ~markersize~ 来指
+  定的，其中 ~linestyle~ 和 ~marker~ 可以采用类似 ~"o-"~ 的简写形式表示, ~"o-"~
+  表示标记为黑点并附带点和点之间的连线. ~linewidth~ 可用 ~lw~ 作为缩写,
+  ~markersize~ 可用 ~ms~ 作为缩写.
+
+
