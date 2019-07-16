@@ -1,0 +1,54 @@
+# -*- org-export-babel-evaluate: nil -*-
+#+PROPERTY: header-args :eval never-export
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="path to your .css file" >
+#+HTML_HEAD: <script src="path to your .js file"></script>
+#+HTML_HEAD: <script type="text/javascript">
+#+HTML_HEAD: <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto html-preamble:t
+#+TITLE: dataprep_sklearn_breastcancer_inmem
+#+AUTHOR: yiddishkop
+#+EMAIL: [[mailto:yiddishkop@163.com][yiddi's email]]
+#+TAGS: {PKGIMPT(i) DATAVIEW(v) DATAPREP(p) GRAPHBUILD(b) GRAPHCOMPT(c)} LINAGAPI(a) PROBAPI(b) MATHFORM(f) MLALGO(m)
+
+*** 数据集原始信息
+    | 数据集名称     | breast cancer wisconsin      |
+    | 数据集用途     | decision tree, random forest |
+    | 数据集大小     | dataset size(in MB)          |
+    | 数据集格式     | format of dataset            |
+    | 数据集形状     | [n_samples, sample_dim]      |
+    | 数据来源       | come from                    |
+    | 数据集创造时间 | build date                   |
+
+*** 构建方法
+
+
+*** 构建代码
+
+#+BEGIN_SRC ipython :tangle yes :session :exports code :async t :results raw drawer
+    from sklearn.tree import DecisionTreeClassifier
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_breast_cancer
+    import pandas as pd
+    from sklearn.metrics import accuracy_score
+    from sklearn.ensemble import RandomForestClassifier
+
+    # load the breast_cancer dataset
+    init_data = load_breast_cancer()
+    (X, y) = load_breast_cancer(return_X_y=True)
+    X = pd.DataFrame(data=X, columns=init_data['feature_names'])
+    y = pd.DataFrame(data=y, columns=['label'])
+
+    # split X into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+    # Train a RandomForestClassifier as model
+    forest = RandomForestClassifier(criterion='entropy',
+                                    n_estimators=200,
+                                    random_state=1,
+                                    n_jobs=2)
+    forest.fit(X_train, y_train)
+
+    y_pred = forest.predict(X_test)
+    print('Accuracy: %.2f' % accuracy_score(y_test, y_pred))
+    print('Accuracy per feature: %.2f' % (accuracy_score(y_test, y_pred)/len(X.columns)))
+#+END_SRC

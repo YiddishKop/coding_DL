@@ -1,0 +1,91 @@
+# -*- org-export-babel-evaluate: nil -*-
+#+PROPERTY: header-args :eval never-export
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="path to your .css file" >
+#+HTML_HEAD: <script src="path to your .js file"></script>
+#+HTML_HEAD: <script type="text/javascript">
+#+HTML_HEAD: <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto html-preamble:t
+#+TITLE: dataprep_pd_wine_csv
+#+AUTHOR: yiddishkop
+#+EMAIL: [[mailto:yiddishkop@163.com][yiddi's email]]
+#+TAGS: PKGIMPT(i) DATAVIEW(v) DATAPREP(p) GRAPHBUILD(b) GRAPHCOMPT(c)
+
+** PCA
+*** 数据集原始信息
+    | 数据集名称     | wine in uci.edu                |
+    | 数据集用途     | EDA(exploratory data analysis) |
+    | 数据集大小     | dataset size(in MB)            |
+    | 数据集格式     | csv                            |
+    | 数据来源       | come from                      |
+    | 数据集创造时间 | build date                     |
+
+
+*** 构建方法
+
+#+BEGIN_QUOTE
+NOTE: ~pd.read_csv()~ function returns a ~pandas.DataFrame~ object. Pandas
+Dataframe is an useful "two-dimensional size-mutable, potentially heterogeneous
+tabular data structure with labeled axes".
+#+END_QUOTE
+
+*** 构建代码
+#+BEGIN_SRC ipython :tangle yes :session :exports code :async t :results raw drawer
+  import pandas as pd
+
+  df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data', header=None)
+
+  df.columns = ['Class label', 'Alcohol', 'Malic acid', 'Ash',
+  'Alcalinity of ash', 'Magnesium', 'Total phenols',
+  'Flavanoids', 'Nonflavanoid phenols', 'Proanthocyanins',
+  'Color intensity', 'Hue', 'OD280/OD315 of diluted wines', 'Proline']
+
+  X = df.drop('Class label', 1)
+  y = df['Class label']
+
+  df.head()
+#+END_SRC
+
+** Decision Tree and Random Forest
+*** 数据集原始信息
+    | 数据集名称     | wine in uci.edu |
+    | 数据集用途     | DecisionTreeClassifier|
+    | 数据集大小     | dataset size(in MB)|
+    | 数据集格式     | csv|
+    | 数据集形状     | [n_samples, sample_dim]|
+    | 数据来源       | come from|
+    | 数据集创造时间 | build date|
+
+
+
+*** 构建方法
+
+
+*** 构建代码
+
+#+BEGIN_SRC ipython :tangle yes :session :exports code :async t :results raw drawer
+    import numpy as np
+    import pandas as pd
+    from IPython.display import display
+    from sklearn.model_selection import train_test_split
+
+    df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data', header=None)
+
+    df.columns = ['Class label', 'Alcohol', 'Malic acid', 'Ash',
+                  'Alcalinity of ash', 'Magnesium', 'Total phenols',
+                  'Flavanoids', 'Nonflavanoid phenols', 'Proanthocyanins',
+                  'Color intensity', 'Hue', 'OD280/OD315 of diluted wines', 'Proline']
+
+    display(df.head())
+
+    X = df.drop('Class label', 1)
+    y = df['Class label']
+    #X, y = df.iloc[:, 1:].values, df.iloc[:, 0].values
+
+    # split X into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=0)
+
+    print('#Training data points: %d' % X_train.shape[0])
+    print('#Testing data points: %d' % X_test.shape[0])
+    print('Class labels:', np.unique(y))
+#+END_SRC

@@ -1,0 +1,133 @@
+*** decision tree
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/03_Decision-Trees_Random-Forest/03_Decision-Tree_Random-Forest.org::*Training][lec03_Decision Tree and Random Forest]]
+- dataset: wine
+- view: sklearn, graphviz
+
+*** random forest
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/03_Decision-Trees_Random-Forest/03_Decision-Tree_Random-Forest.org::*Training][lec03_wushanghong]]
+- dataset: wine
+- view: sklearn, graphviz
+- special:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/03_Decision-Trees_Random-Forest/03_Decision-Tree_Random-Forest.org::*Computing%20Feature%20Importance][feature importance]]
+  2. [[file:~/git_repos/on_ml_wushanghong/ml/labs/03_Decision-Trees_Random-Forest/03_Decision-Tree_Random-Forest.org::*Feature%20Selection][Feature Selection]]
+  3. [[file:~/git_repos/on_ml_wushanghong/ml/labs/03_Decision-Trees_Random-Forest/03_Decision-Tree_Random-Forest.org::*plot%20the%20boundary][plot the classifier boundary]]
+
+*** PCA
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/02_EDA_PCA/02_EDA_PCA.org::*Eigendecomposition][Eigendecomposition]]
+
+- dataset: wine
+- special: [[file:~/git_repos/on_ml_wushanghong/ml/labs/02_EDA_PCA/02_EDA_PCA.org::*Feature%20Transformation][xxx.npy]]
+
+*** Perceptron
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/04-1_Perceptron_Adaline/04-1_Perceptron_Adaline.org::*Training%20Perceptron%20via%20Scikit-learn][Training Perceptron via Scikit-learn]]
+- dataset: iris
+
+*** Adaline
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/04-1_Perceptron_Adaline/04-1_Perceptron_Adaline.org::*Implementing%20Adaline%20with%20GD][Implementing Adaline with GD]]
+- dataset: iris
+
+*** linear regression
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/04-2_Regression/04-2_Regression.org::*Fitting%20a%20Linear%20Regression%20Model%20via%20Scikit-learn][Fitting a Linear Regression Model via Scikit-learn]]
+
+- special:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/04-2_Regression/04-2_Regression.org::*scatter%20plot%20to%20find%20outlier][scatter plot to find outlier]]
+  2. [[file:~/git_repos/on_ml_wushanghong/ml/labs/04-2_Regression/04-2_Regression.org::*visualize%20the%20fitness%20of%20linear%20regression][visualize the line fitness of linear regression]]
+  3. [[file:~/git_repos/on_ml_wushanghong/ml/labs/04-2_Regression/04-2_Regression.org::*Residual%20Plot][Residual Plot detect nonlinearity and outlier]]
+
+*** polynomial regression
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/04-2_Regression/04-2_Regression.org::*Polynomial%20Regression][Polynomial Regression]]
+- dataset: house data
+
+*** decision tree regression
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/04-2_Regression/04-2_Regression.org::*Decision%20Tree%20Regression][Decision Tree Regression]]
+- dataset: house data
+
+*** random forest regression
+- implementations
+  1.[[file:~/git_repos/on_ml_wushanghong/ml/labs/04-2_Regression/04-2_Regression.org::*Random%20Forest%20Regression][Random Forest Regression]]
+- dataset: house data
+
+*** learnning curve
+- LASSO as feature selection
+- PCA random forest
+
+*** RANSAC regression(对 outlier 不敏感)
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/05_Regularization/05_Regularization.org::*Ignoring%20Outliers%20using%20RANSAC][Ignoring Outliers using RANSAC]]
+
+*** logistic regression
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/06_Logistic-Regression_Metrics/06_Logistic-Regression_Metrics.org::*Training%20a%20Logistic%20Regression%20Model%20with%20Scikit-learn][Training a Logistic Regression Model with Scikit-learn]]
+- special
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/06_Logistic-Regression_Metrics/06_Logistic-Regression_Metrics.org::*Receiver%20Operating%20Characteristic%20(ROC)%20Curve][ROC]]
+  2. [[file:~/git_repos/on_ml_wushanghong/ml/labs/06_Logistic-Regression_Metrics/06_Logistic-Regression_Metrics.org::*Area%20Under%20the%20Curve%20(AUC)][Area Under the Curve (AUC)]]
+  3. [[file:~/git_repos/on_ml_wushanghong/ml/labs/06_Logistic-Regression_Metrics/06_Logistic-Regression_Metrics.org::*Confusion%20Matrix][Confusion Matrix]]
+  4. [[file:~/git_repos/on_ml_wushanghong/ml/labs/06_Logistic-Regression_Metrics/06_Logistic-Regression_Metrics.org::*True%20and%20False%20Positive%20Rate][True and False Positive Rate]]
+  5. [[file:~/git_repos/on_ml_wushanghong/ml/labs/06_Logistic-Regression_Metrics/06_Logistic-Regression_Metrics.org::*Precision,%20Recall,%20and%20$F_1$%20-Score][Precision, Recall, and F1-Score]]
+
+*** KNN classifier
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*K-Nearest%20Neighbors%20Classifier][K-Nearest Neighbors Classifier]]
+  2.
+
+*** Support vector classifier
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*Support%20Vector%20Classifier][Support Vector Classifier]]
+
+
+*** tune hyperameters by Grid Search
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*Tuning%20Hyperparameters%20via%20Grid%20Search][Tuning Hyperparameters via Grid Search]]
+
+*** handle missing data
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*Dealing%20with%20Missing%20Data][Dealing with Missing Data]]
+  2. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*Eliminating%20Samples%20or%20Features%20with%20Missing%20Values][Eliminating Samples or Features with Missing Values]]
+  3. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*Imputing%20Missing%20Values][Imputing Missing Values]]
+
+*** handle categorical data
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*Handling%20Categorical%20Data][Handling Categorical Data]]
+
+*** do one-hot encoding
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*One-Hot%20Encoding][One-Hot Encoding]]
+  2. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*The%20get_dummies()%20Method%20in%20Pandas][The get_dummies() Method in Pandas]]
+
+
+*** scikit learn pipline
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/07_SVM_Pipeline/07_SVM_Pipeline.org::*Scikit-learn%20Pipeline][Scikit-learn Pipeline]]
+
+*** tune hyperameters by cross validation
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/08_CV_Ensembling/08_CV_Ensembling.org::*Holdout%20Method][Holdout Method]]
+
+*** tune hyperameters by k-fold cross validation
+- implementations
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/08_CV_Ensembling/08_CV_Ensembling.org::*Nested%20CV][Nested CV]]
+
+*** ensemble by voting
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/08_CV_Ensembling/08_CV_Ensembling.org::*Voting][Voting]]
+
+*** ensemble by Bagging
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/08_CV_Ensembling/08_CV_Ensembling.org::*Bagging][Bagging]]
+
+*** ensemble by Boosting
+- implementations:
+  1. [[file:~/git_repos/on_ml_wushanghong/ml/labs/08_CV_Ensembling/08_CV_Ensembling.org::*Boosting][Boosting]]
+
+
+*** n-gram of language modeling
+- implementations
+  1.

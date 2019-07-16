@@ -1,0 +1,140 @@
+# -*- org-export-babel-evaluate: nil -*-
+#+PROPERTY: header-args :eval never-export
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="path to your .css file" >
+#+HTML_HEAD: <script src="path to your .js file"></script>
+#+HTML_HEAD: <script type="text/javascript">
+#+HTML_HEAD: <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto html-preamble:t
+#+TITLE: dataprep_urllib_text8
+#+AUTHOR: yiddishkop
+#+EMAIL: [[mailto:yiddishkop@163.com][yiddi's email]]
+
+*** 数据集原始信息
+| 数据集名称     | text8                      |
+| 数据集用途     | Skip-Gram laguage modeling |
+| 数据集大小     | 100 MB                     |
+| 数据来源       | english wiki               |
+| 数据集创造时间 | 2006-05-3                  |
+| 样本数量       | 17,005,207 tokens          |
+
+*** 构建方法
+
+To generate batches for training, several functions defined below are used.
+
+First, we read the data into the memory and build the vocabulary using a number
+of most commonly seen words.
+
+Meanwhile, we build keep two dictionaries, a dictionary that translates words to
+indices and another which does the reverse.
+
+Then, for every word in the text selected as the center word, pair them with one
+of the context words. Finally, a python generator which generates a batch of
+pairs of center-target pairs.
+
+*** 构建代码
+#+BEGIN_SRC ipython :tangle yes :exports code  :results raw drawer
+    """The content of process_data.py"""
+
+    from collections import Counter
+    import random
+    import os
+    import sys
+    sys.path.append('..')
+    import zipfile
+
+    import numpy as np
+    from six.moves import urllib
+    import tensorflow as tf
+
+    # Parameters for downloading data
+    DOWNLOAD_URL = 'http://mattmahoney.net/dc/'
+    EXPECTED_BYTES = 31344016
+    DATA_FOLDER = 'data/'
+    FILE_NAME = 'text8.zip'
+
+    def make_dir(path):
+        """ Create a directory if there isn't one already. """
+        try:
+            os.mkdir(path)
+        except OSError:
+            pass
+
+    def download(file_name, expected_bytes):
+        """ Download the dataset text8 if it's not already downloaded """
+        file_path = DATA_FOLDER + file_name
+        if os.path.exists(file_path):
+            print("Dataset ready")
+            return file_path
+        file_name, _ = urllib.request.urlretrieve(DOWNLOAD_URL + file_name, file_path)
+        file_stat = os.stat(file_path)
+        if file_stat.st_size == expected_bytes:
+            print('Successfully downloaded the file', file_name)
+        else:
+            raise Exception(
+                  'File ' + file_name +
+                  ' might be corrupted. You should try downloading it with a browser.')
+        return file_path
+
+
+    def read_data(file_path):
+        """ Read data into a list of tokens"""
+        with zipfile.ZipFile(file_path) as f:
+            words = tf.compat.as_str(f.read(f.namelist()[0])).split()
+            # tf.compat.as_str() converts the input into the string
+        return words
+
+    def build_vocab(words, vocab_size):
+        """ Build vocabulary of VOCAB_SIZE most frequent words """
+        dictionary = dict()
+        count = [('UNK', -1)]
+        count.extend(Counter(words).most_common(vocab_size - 1))
+        index = 0
+        make_dir('processed')
+        with open('processed/vocab_1000.tsv', "w") as f:
+            for word, _ in count:
+                dictionary[word] = index
+                if index < 1000:
+                    f.write(word + "\n")
+                index += 1
+        index_dictionary = dict(zip(dictionary.values(), dictionary.keys()))
+        return dictionary, index_dictionary
+
+    def convert_words_to_index(words, dictionary):
+        """ Replace each word in the dataset with its index in the dictionary """
+        return [dictionary[word] if word in dictionary else 0 for word in words]
+
+    def generate_sample(index_words, context_window_size):
+        """ Form training pairs according to the skip-gram model. """
+        for index, center in enumerate(index_words):
+            context = random.randint(1, context_window_size)
+            # get a random target before the center word
+            for target in index_words[max(0, index - context): index]:
+                yield center, target
+            # get a random target after the center wrod
+            for target in index_words[index + 1: index + context + 1]:
+                yield center, target
+
+    def get_batch(iterator, batch_size):
+        """ Group a numerical stream into batches and yield them as Numpy arrays. """
+        while True:
+            center_batch = np.zeros(batch_size, dtype=np.int32)
+            target_batch = np.zeros([batch_size, 1])
+            for index in range(batch_size):
+                center_batch[index], target_batch[index] = next(iterator)
+            yield center_batch, target_batch
+
+    def get_batch_gen(index_words, context_window_size, batch_size):
+        """ Return a python generator that generates batches"""
+        single_gen = generate_sample(index_words, context_window_size)
+        batch_gen = get_batch(single_gen, batch_size)
+        return batch_gen
+
+    def process_data(vocab_size):
+        """ Read data, build vocabulary and dictionary"""
+        file_path = download(FILE_NAME, EXPECTED_BYTES)
+        words = read_data(file_path)
+        dictionary, index_dictionary = build_vocab(words, vocab_size)
+        index_words = convert_words_to_index(words, dictionary)
+        del words # to save memory
+        return index_words, dictionary, index_dictionary
+#+END_SRC
